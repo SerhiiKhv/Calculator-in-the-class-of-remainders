@@ -1,58 +1,109 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 
 export const Calculator = () => {
-    const [m, setM] = useState('');
-    const [a, setA] = useState('');
-    const [b, setB] = useState('');
-    const [c, setC] = useState('');
+    const [m, setM] = useState<number>(0);
+    const [a, setA] = useState<number>(0);
+    const [b, setB] = useState<number>(0);
+    const [c, setC] = useState<number | string>('');
 
     const handleClear = () => {
-        setM('');
-        setA('');
-        setB('');
+        setM(0);
+        setA(0);
+        setB(0);
         setC('');
     };
-
     const handleAdd = () => {
-        const result = (parseFloat(a) + parseFloat(b)) % parseFloat(m);
-        setC(String(result));
+        const result = (a + b) % m;
+        setC(result);
     };
     const handleSubtract = () => {
-        const result = ((parseFloat(a) - parseFloat(b)) % parseFloat(m) + parseFloat(m)) % parseFloat(m);
-        setC(String(result));
+        const result = ((a - b) % m + m) % m;
+        setC(result);
     };
     const handleMultiply = () => {
-        const result = (parseFloat(a) * parseFloat(b)) % parseFloat(m);
-        setC(String(result));
+        const result = (a * b) % m;
+        setC(result);
     };
     const handlePower = () => {
-        const result = Math.pow(parseFloat(a), parseFloat(b)) % parseFloat(m);
-        setC(String(result));
+        const result = (Math.pow(a, b) % m);
+        setC(result);
     };
     const handleInverse = () => {
-        const result = (-parseFloat(a) % parseFloat(m) + parseFloat(m)) % parseFloat(m);
-        setC(String(result));
+        const result = (-a % m + m) % m;
+        setC(result);
     };
     const handleDivision = () => {
-        const result = (parseFloat(a) * parseFloat(b) - 1) % parseFloat(m);
-        setC(String(result));
+        const result = (a * b - 1) % m;
+        setC(result);
     };
-    const isPrime = () => {
-        if (+a <= 1){ setC("false"); return}
-        if (+a <= 3){ setC("true"); return}
-        if (+a % 2 === 0 || +a % 3 === 0){ setC("false"); return}
-
-        for (let i = 5; i * i <= +a; i += 6) {
-            if (+a % i === 0 || +a % (i + 2) === 0) {
-                setC("false"); return
-            }
+    const handleIsPrime = () => {
+        setC(String(isPrimeTest(a)))
+    };
+    const handleGenerate = () => {
+        const randomA = generateRandomNumber(a);
+        const check = isPrimeTest(randomA);
+        if (check) {
+            setC(randomA);
+        } else {
+            handleGenerate();
         }
-        setC("true"); return
-    }
+    };
+    const handleFindGCD = () => {
+        const result = findGCD(a, b)
+        setC(result)
+    };
+    const handleCalculateEulerTotient = () => {
+         calculateEulerTotient(a)
+    };
+    const handleCalculateInverse = () => {
+        if (m <= 0 || a <= 0) {
+            setC('Невірні вхідні параметри');
+            return;
+        }
 
-    function createButton(onClick: () => void, text: string, className?: string){
-        if(!className) className ="bg-blue-500 text-white p-2 rounded-md ml-2"
-        return(
+        function modInverse(a: number, m: number): number {
+            for (let x = 1; x < m; x++) {
+                if ((a * x) % m === 1) {
+                    return x;
+                }
+            }
+            return -1;
+        }
+
+        const inverse = modInverse(a, m);
+
+        if (inverse === -1) {
+            setC('Оберненого елемента не існує');
+        } else {
+            setC(inverse);
+        }
+    };
+
+    function findGCD(num1: number, num2: number) {
+        while (num2 !== 0) {
+            const remainder = num1 % num2;
+            num1 = num2;
+            num2 = remainder;
+        }
+        return num1;
+    }
+    function isPrimeTest(num: number): boolean {
+        if (num <= 1) return false;
+        if (num <= 3) return true;
+
+        if (num % 2 === 0 || num % 3 === 0) return false;
+
+        for (let i = 5; i * i <= num; i += 6) {
+            if (num % i === 0 || num % (i + 2) === 0) return false;
+        }
+        return true;
+    }
+    function generateRandomNumber(max: number): number {
+        return Math.floor(Math.random() * max) + 1;
+    }
+    function createButton(onClick: () => void, text: string, className?: string) {
+        if (!className) className = "bg-blue-500 text-white p-2 rounded-md"
+        return (
             <button
                 onClick={onClick}
                 className={className}>
@@ -60,10 +111,32 @@ export const Calculator = () => {
             </button>
         )
     }
+    function calculateEulerTotient(n: number){
+        if (n <= 0) {
+            setC('Невірне вхідне число');
+            return;
+        }
+
+        let result = n;
+
+        for (let i = 2; i * i <= n; i++) {
+            if (n % i === 0) {
+                while (n % i === 0) {
+                    n /= i;
+                }
+                result -= result / i; // Віднімаємо взаємно прості числа
+            }
+        }
+
+        if (n > 1) {
+            result -= result / n;
+        }
+
+        setC(result);
+    }
 
     return (
         <div className="container mx-auto p-4">
-
             <h1 className="text-2xl font-bold mb-4">Calculator</h1>
 
             <div className="mb-4">
@@ -72,10 +145,9 @@ export const Calculator = () => {
                     type="text"
                     id="m"
                     value={m}
-                    onChange={(e) => setM(e.target.value)}
+                    onChange={(e) => setM(+e.target.value)}
                     className="border h-10 border-gray-300 p-2 rounded-md w-full"/>
             </div>
-
             <div className="grid grid-cols-2 gap-2">
                 <div className="mb-4">
                     <label htmlFor="a">Single Value(a):</label>
@@ -83,7 +155,7 @@ export const Calculator = () => {
                         type="text"
                         id="a"
                         value={a}
-                        onChange={(e) => setA(e.target.value)}
+                        onChange={(e) => setA(+e.target.value)}
                         className="border h-10 border-gray-300 p-2 rounded-md w-full"/>
                 </div>
 
@@ -93,30 +165,30 @@ export const Calculator = () => {
                         type="text"
                         id="b"
                         value={b}
-                        onChange={(e) => setB(e.target.value)}
+                        onChange={(e) => setB(+e.target.value)}
                         className="border h-10 border-gray-300 p-2 rounded-md w-full"/>
                 </div>
             </div>
-
-
             <div className="mb-4">
                 <label>Result:</label>
                 <div className="border h-10 border-gray-300 p-2 rounded-md w-full">{c}</div>
             </div>
 
-            {createButton(handleAdd, "Add (a+b mod m)")}
-            {createButton(handleSubtract, "Subtract (a-b mod m)")}
-            {createButton(handleMultiply, "Multiply (a*b mod m)")}
-            {createButton(handlePower, "Power (a^b mod m)")}
-            {createButton(handleInverse, "Inverse (-a mod m) "+"")}
-            {createButton(handleDivision, "Division (a/b mod m)")}
-            {createButton(isPrime, "Check simple number (a)")}
-
-            <button
-                onClick={handleClear}
-                className="bg-red-500 text-white p-2 rounded-md ml-2">
-                Clear
-            </button>
+            <div className="grid grid-cols-6 gap-2">
+                {createButton(handleAdd, "Add (a+b mod m)")}
+                {createButton(handleSubtract, "Subtract (a-b mod m)")}
+                {createButton(handleMultiply, "Multiply (a*b mod m)")}
+                {createButton(handlePower, "Power (a^b mod m)")}
+                {createButton(handleInverse, "Inverse (-a mod m)")}
+                {createButton(handleDivision, "Division (a/b mod m)")}
+                {createButton(handleIsPrime, "Check simple number (a)")}
+                {createButton(handleGenerate, "Generate prime number")}
+                {createButton(handleFindGCD, "Find GCD (a, b)")}
+                {createButton(handleCalculateEulerTotient, "Calculate Euler Totient")}
+                {createButton(handleCalculateInverse, "Calculate Inverse (*)")}
+                {createButton(handleClear, "Clear", "bg-red-500 text-white p-2 rounded-md")}
+            </div>
         </div>
     );
 };
+
