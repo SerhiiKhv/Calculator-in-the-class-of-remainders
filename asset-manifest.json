@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/Calculator-in-the-class-of-remainders/static/css/main.01698e74.css",
+    "main.js": "/Calculator-in-the-class-of-remainders/static/js/main.360dd9f3.js",
+    "static/js/787.e7255acf.chunk.js": "/Calculator-in-the-class-of-remainders/static/js/787.e7255acf.chunk.js",
+    "index.html": "/Calculator-in-the-class-of-remainders/index.html",
+    "main.01698e74.css.map": "/Calculator-in-the-class-of-remainders/static/css/main.01698e74.css.map",
+    "main.360dd9f3.js.map": "/Calculator-in-the-class-of-remainders/static/js/main.360dd9f3.js.map",
+    "787.e7255acf.chunk.js.map": "/Calculator-in-the-class-of-remainders/static/js/787.e7255acf.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.01698e74.css",
+    "static/js/main.360dd9f3.js"
+  ]
+}
