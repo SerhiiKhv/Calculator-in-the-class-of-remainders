@@ -4,7 +4,7 @@ export const Calculator = () => {
     const [m, setM] = useState<number>(0);
     const [a, setA] = useState<number>(0);
     const [b, setB] = useState<number>(0);
-    const [c, setC] = useState<number | string>('');
+    const [c, setC] = useState<number | string | string[]>('');
 
     const handleClear = () => {
         setM(0);
@@ -79,6 +79,22 @@ export const Calculator = () => {
         }
     };
 
+    function candidateSearch() {
+        setC("Обрахунок")
+        let res = []
+        for(let i = 1; i <= m; i++){
+            for(let j = 1; j <= m; j++) {
+                const result = (i * j) % m;
+                if(result == 1){
+                    res.push("x: " + i + " y: " + j + " | ")
+                    j = 1
+                    i++
+                }
+            }
+        }
+        setC(res)
+    }
+
     function findGCD(num1: number, num2: number) {
         while (num2 !== 0) {
             const remainder = num1 % num2;
@@ -135,6 +151,8 @@ export const Calculator = () => {
         setC(result);
     }
 
+
+
     return (
         <div className="container mx-auto p-4">
             <h1 className="text-2xl font-bold mb-4">Calculator</h1>
@@ -186,6 +204,7 @@ export const Calculator = () => {
                 {createButton(handleFindGCD, "Find GCD (a, b)")}
                 {createButton(handleCalculateEulerTotient, "Calculate Euler Totient")}
                 {createButton(handleCalculateInverse, "Calculate Inverse (*)")}
+                {createButton(candidateSearch, "CandidateSearch")}
                 {createButton(handleClear, "Clear", "bg-red-500 text-white p-2 rounded-md")}
             </div>
         </div>
